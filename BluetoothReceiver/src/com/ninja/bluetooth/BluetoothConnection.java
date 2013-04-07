@@ -32,7 +32,7 @@ public class BluetoothConnection {
 
 	// Member fields
 	private final BluetoothAdapter mAdapter;
-	private final Handler mHandler;
+	private Handler mHandler;
 	private AcceptThread mSecureAcceptThread;
 	private AcceptThread mInsecureAcceptThread;
 	private ConnectedThread mConnectedThread;
@@ -48,6 +48,17 @@ public class BluetoothConnection {
 	public static final int STATE_CONNECTED = 3; // now connected to a remote
 													// device
 
+	private static BluetoothConnection btConnection;
+	
+	public static BluetoothConnection getBluetoothConnection(Context context, Handler handler){
+		if(btConnection == null){
+			btConnection = new BluetoothConnection(context, handler);
+		}else{
+			btConnection.mHandler = handler;
+		}
+		return btConnection;
+	}
+	
 	/**
 	 * Constructor. Prepares a new BluetoothChat session.
 	 * 
@@ -56,7 +67,7 @@ public class BluetoothConnection {
 	 * @param handler
 	 *            A Handler to send messages back to the UI Activity
 	 */
-	public BluetoothConnection(Context context, Handler handler) {
+	private BluetoothConnection(Context context, Handler handler) {
 		mAdapter = BluetoothAdapter.getDefaultAdapter();
 		mState = STATE_NONE;
 		mHandler = handler;
@@ -74,7 +85,7 @@ public class BluetoothConnection {
 		mState = state;
 
 		// Give the new state to the Handler so the UI Activity can update
-		mHandler.obtainMessage(MainActivity.MESSAGE_STATE_CHANGE, state, -1)
+		mHandler.obtainMessage(Constants.MESSAGE_STATE_CHANGE, state, -1)
 				.sendToTarget();
 	}
 
@@ -107,8 +118,8 @@ public class BluetoothConnection {
 			mSecureAcceptThread.start();
 		}
 		if (mInsecureAcceptThread == null) {
-			mInsecureAcceptThread = new AcceptThread(false);
-			mInsecureAcceptThread.start();
+			//mInsecureAcceptThread = new AcceptThread(false);
+			//mInsecureAcceptThread.start();
 		}
 	}
 	
@@ -145,8 +156,9 @@ public class BluetoothConnection {
 	 */
 	public synchronized void connected(BluetoothSocket socket,
 			BluetoothDevice device, final String socketType) {
-		if (D)
+		if (D){
 			Log.d(TAG, "connected, Socket Type:" + socketType);
+		}
 
 		// Cancel any thread currently running a connection
 		if (mConnectedThread != null) {
@@ -170,7 +182,7 @@ public class BluetoothConnection {
 		mConnectedThread.start();
 
 		// Send the name of the connected device back to the UI Activity
-		Message msg = mHandler.obtainMessage(MainActivity.MESSAGE_DEVICE_NAME);
+		Message msg = mHandler.obtainMessage(Constants.MESSAGE_DEVICE_NAME);
 		Bundle bundle = new Bundle();
 		bundle.putString(MainActivity.DEVICE_NAME, device.getName());
 		msg.setData(bundle);
@@ -225,7 +237,7 @@ public class BluetoothConnection {
      */
     private void connectionFailed() {
         // Send a failure message back to the Activity
-        Message msg = mHandler.obtainMessage(MainActivity.MESSAGE_TOAST);
+        Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
         bundle.putString(MainActivity.TOAST, "Unable to connect device");
         msg.setData(bundle);
@@ -240,7 +252,7 @@ public class BluetoothConnection {
      */
     private void connectionLost() {
         // Send a failure message back to the Activity
-        Message msg = mHandler.obtainMessage(MainActivity.MESSAGE_TOAST);
+        Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
         bundle.putString(MainActivity.TOAST, "Device connection was lost");
         msg.setData(bundle);
@@ -311,6 +323,7 @@ public class BluetoothConnection {
 						case STATE_LISTEN:
 						case STATE_CONNECTING:
 							// Situation normal. Start the connected thread.
+							Log.d(TAG, "Connecting .... ");
 							connected(socket, socket.getRemoteDevice(),
 									mSocketType);
 							break;
@@ -319,6 +332,7 @@ public class BluetoothConnection {
 							// Either not ready or already connected. Terminate
 							// new socket.
 							try {
+								Log.d(TAG, "closing .... ");
 								socket.close();
 							} catch (IOException e) {
 								Log.d(TAG, "Could not close unwanted socket", e);
@@ -457,7 +471,7 @@ public class BluetoothConnection {
                     bytes = mmInStream.read(buffer);
 
                     // Send the obtained bytes to the UI Activity
-                    mHandler.obtainMessage(MainActivity.MESSAGE_READ, bytes, -1, buffer)
+                    mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
                             .sendToTarget();
                 } catch (IOException e) {
                     Log.d(TAG, "disconnected", e);
@@ -476,7 +490,7 @@ public class BluetoothConnection {
                 mmOutStream.write(buffer);
 
                 // Share the sent message back to the UI Activity
-                mHandler.obtainMessage(MainActivity.MESSAGE_WRITE, -1, -1, buffer)
+                mHandler.obtainMessage(Constants.MESSAGE_WRITE, -1, -1, buffer)
                         .sendToTarget();
             } catch (IOException e) {
                 Log.d(TAG, "Exception during write", e);

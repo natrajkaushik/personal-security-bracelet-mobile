@@ -2,7 +2,7 @@ package com.ninja.bluetooth;
 
 import android.telephony.SmsManager;
 
-public class SMSService {
+public class SMSHelper {
 
 	private static SmsManager smsManager = SmsManager.getDefault();
 	

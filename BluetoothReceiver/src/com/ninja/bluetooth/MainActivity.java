@@ -26,13 +26,6 @@ public class MainActivity extends Activity {
 	private static final String TAG = "MainActivity";
 	private static final boolean D = true;
 
-	// Message types sent from the BluetoothConnection Handler
-	public static final int MESSAGE_STATE_CHANGE = 1;
-	public static final int MESSAGE_READ = 2;
-	public static final int MESSAGE_WRITE = 3;
-	public static final int MESSAGE_DEVICE_NAME = 4;
-	public static final int MESSAGE_TOAST = 5;
-
 	// Key names received from the BluetoothConnection Handler
 	public static final String DEVICE_NAME = "device_name";
 	public static final String TOAST = "toast";
@@ -145,7 +138,7 @@ public class MainActivity extends Activity {
 	public void sendSMS(double latitude, double longitude) {
 		String text = Constants.ALERT_TEXT + "latitude = " + latitude
 				+ "\nlongitude= " + longitude;
-		SMSService.sendSMS(text);
+		SMSHelper.sendSMS(text);
 	}
 
 	@Override
@@ -162,13 +155,14 @@ public class MainActivity extends Activity {
 			startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
 			// Otherwise, setup the receiver
 		} else {
-			if (btConnection == null)
+			if (btConnection == null){
 				setupConnection();
+			}
 		}
 	}
 
 	private void setupConnection() {
-		btConnection = new BluetoothConnection(this, mHandler);
+		btConnection = BluetoothConnection.getBluetoothConnection(this, mHandler);
 	}
 
 	public LocationManager getLocationManager() {
