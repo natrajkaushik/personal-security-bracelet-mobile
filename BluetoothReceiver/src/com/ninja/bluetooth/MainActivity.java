@@ -26,14 +26,14 @@ public class MainActivity extends Activity {
 	private static final String TAG = "MainActivity";
 	private static final boolean D = true;
 
-	// Message types sent from the BluetoothService Handler
+	// Message types sent from the BluetoothConnection Handler
 	public static final int MESSAGE_STATE_CHANGE = 1;
 	public static final int MESSAGE_READ = 2;
 	public static final int MESSAGE_WRITE = 3;
 	public static final int MESSAGE_DEVICE_NAME = 4;
 	public static final int MESSAGE_TOAST = 5;
 
-	// Key names received from the BluetoothService Handler
+	// Key names received from the BluetoothConnection Handler
 	public static final String DEVICE_NAME = "device_name";
 	public static final String TOAST = "toast";
 
@@ -46,10 +46,10 @@ public class MainActivity extends Activity {
 	private TextView mTitle;
 
 	private BluetoothAdapter mBluetoothAdapter = null; // Local Bluetooth
-														// adapter
-	private LocationManager mLocationManager = null; // reference to
+														// Adapter
+	private LocationManager mLocationManager = null; // Reference to
 														// LocationManager
-	private BluetoothService btService = null; // reference to BluetoothService
+	private BluetoothConnection btConnection = null; // Reference to BluetoothConnection
 
 	/* location co-ordinates of mobile device */
 	private double latitude;
@@ -60,13 +60,13 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		if (D)
 			Log.d(TAG, "+++ ON CREATE +++");
-		
+
 		setLayoutAndTitle();
 		getBlueToothAdapter();
 		setupLocationDetection();
 	}
-	
-	private void setLayoutAndTitle(){
+
+	private void setLayoutAndTitle() {
 		// Set up the window layout
 		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.main);
@@ -123,7 +123,7 @@ public class MainActivity extends Activity {
 
 			latitude = loc.getLatitude();
 			longitude = loc.getLongitude();
-			//sendSMS();
+			// sendSMS();
 		}
 
 		@Override
@@ -143,7 +143,8 @@ public class MainActivity extends Activity {
 	}
 
 	public void sendSMS(double latitude, double longitude) {
-		String text = Constants.ALERT_TEXT + "latitude = " + latitude + "\nlongitude= " + longitude;
+		String text = Constants.ALERT_TEXT + "latitude = " + latitude
+				+ "\nlongitude= " + longitude;
 		SMSService.sendSMS(text);
 	}
 
@@ -161,13 +162,13 @@ public class MainActivity extends Activity {
 			startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
 			// Otherwise, setup the receiver
 		} else {
-			if (btService == null)
-				setupService();
+			if (btConnection == null)
+				setupConnection();
 		}
 	}
 
-	private void setupService() {
-		btService = new BluetoothService(this, mHandler);
+	private void setupConnection() {
+		btConnection = new BluetoothConnection(this, mHandler);
 	}
 
 	public LocationManager getLocationManager() {
@@ -184,12 +185,12 @@ public class MainActivity extends Activity {
 		// not enabled during onStart(), so we were paused to enable it...
 		// onResume() will be called when ACTION_REQUEST_ENABLE activity
 		// returns.
-		if (btService != null) {
+		if (btConnection != null) {
 			// Only if the state is STATE_NONE, do we know that we haven't
 			// started already
-			if (btService.getState() == BluetoothService.STATE_NONE) {
-				// Start the Bluetooth services
-				btService.start();
+			if (btConnection.getState() == BluetoothConnection.STATE_NONE) {
+				// Start the Bluetooth connection
+				btConnection.start();
 			}
 		}
 	}
@@ -211,19 +212,21 @@ public class MainActivity extends Activity {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		if (D)
+		if (D) {
 			Log.d(TAG, "--- ON DESTROY ---");
+		}
 
 		// Stop the Bluetooth Receiver
-		if (btService != null)
-			btService.stop();
+		if (btConnection != null)
+			btConnection.stop();
 		if (D)
 			Log.d(TAG, "--- ON DESTROY ---");
 	}
 
 	private void ensureDiscoverable() {
-		if (D)
+		if (D){
 			Log.d(TAG, "ensure discoverable");
+		}
 		if (mBluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
 			Intent discoverableIntent = new Intent(
 					BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
@@ -233,17 +236,19 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	// The Handler that gets information back from the BluetoothService
+	// The Handler that gets information back from the BluetoothConnection
 	private final Handler mHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			Log.d(TAG, msg.toString());
+			sendSMS(latitude, longitude);
 		}
 	};
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (D)
+		if (D) {
 			Log.d(TAG, "onActivityResult " + resultCode);
+		}
 		switch (requestCode) {
 		case REQUEST_CONNECT_DEVICE_SECURE:
 			// When DeviceListActivity returns with a device to connect
@@ -278,7 +283,7 @@ public class MainActivity extends Activity {
 		// Get the BLuetoothDevice object
 		BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
 		// Attempt to connect to the device
-		btService.connect(device, secure);
+		btConnection.connect(device, secure);
 	}
 
 	@Override
