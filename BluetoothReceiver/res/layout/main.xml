@@ -1,14 +1,30 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-    <TextView
+    android:layout_height="match_parent" 
+    android:background="@color/white"
+    >
+    
+    <ImageView
+        android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="@string/hello_world"
-        tools:context=".MainActivity" />
+        android:layout_alignParentLeft="true"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_alignParentTop="true" android:src="@drawable/logo"
+        android:contentDescription= "@string/buzz_image"
+        />
+
+	<ImageView
+	    android:id="@+id/backgroundImage"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentLeft="true"
+	    android:layout_alignParentTop="true"
+	    android:contentDescription="@string/buzz_image"
+	    android:paddingTop="50dp"
+	    android:scaleType="centerCrop"
+	    android:src="@drawable/gtbuzz" />
 
 </RelativeLayout>
