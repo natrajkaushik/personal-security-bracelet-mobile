@@ -9,12 +9,16 @@ public class Constants {
 	public static final String CANCEL_TEXT = "=== BuzzGuardian ===\n CANCEL\n";
 	public static final String TRACKING_TEXT = "=== BuzzGuardian ===\n TRACKING\n";
 	
+	public static final String ARDUINO_EMERGENCY_MESSAGE = "1";
+	public static final String ARDUINO_CANCEL_MESSAGE = "2";
+	
+	public static final String ARDUINO_ERROR_MESSAGE = "UNKNOWN MESSAGE FROM ARDUINO";
 	public static final String EMERGENCY_MESSAGE = "EMERGENCY";
 	public static final String CANCEL_MESSAGE = "CANCEL";
 	public static final String TRACKING_MESSAGE = "TRACKING";
-	public static final String ERROR_MESSAGE = "UNKNOWN MESSAGE FROM ARDUINO";
 	
-	public static final int TRACKING_PERIODICITY = 60000; 
+	
+	public static final int TRACKING_PERIODICITY = 14000; 
 
 	// Message types sent from the BluetoothConnection Handler
 	public static final int MESSAGE_STATE_CHANGE = 1;

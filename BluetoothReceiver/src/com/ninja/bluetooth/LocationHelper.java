@@ -59,6 +59,10 @@ public class LocationHelper {
 		myLocationListener = new MyLocationListener(processor);
 		mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
 		mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, myLocationListener);
+		
+		Location lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+		this.latitude = lastKnownLocation.getLatitude();
+		this.longitude = lastKnownLocation.getLongitude();
 	}
 	
 	/**

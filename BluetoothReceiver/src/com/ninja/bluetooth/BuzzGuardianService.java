@@ -113,8 +113,12 @@ public class BuzzGuardianService extends Service {
 	 */
 	private void startTracking() {
 		setTracking(true);
-		if (!trackerThread.isAlive()) {
-			trackerThread.start();
+		if (!trackerThread.isAlive() || trackerThread.isInterrupted()) {
+			try {
+				trackerThread.start();
+			} catch (IllegalThreadStateException e) {
+
+			}
 		}
 	}
 
@@ -134,16 +138,22 @@ public class BuzzGuardianService extends Service {
 		@Override
 		public void run() {
 			try {
-				Thread.sleep(Constants.TRACKING_PERIODICITY);
-				sendTrackingSMS();
+				while (!Thread.currentThread().isInterrupted()) {
+					while (true) {
+						Thread.sleep(Constants.TRACKING_PERIODICITY);
+						sendTrackingSMS();
+					}
+				}
 			} catch (InterruptedException e) {
 				// if a cancel request is received
 				setTracking(false);
+				Thread.currentThread().interrupt();
 			}
 		}
 
 		private void sendTrackingSMS() {
-			sendSMS(Constants.TRACKING_TEXT, locationHelper.getLatitude(), locationHelper.getLongitude());
+			sendSMS(Constants.TRACKING_TEXT, locationHelper.getLatitude(),
+					locationHelper.getLongitude());
 		}
 
 	}

@@ -1,5 +1,7 @@
 package com.ninja.bluetooth;
 
+import android.util.Log;
+
 public class Utils {
 
 	/**
@@ -8,14 +10,15 @@ public class Utils {
 	 */
 	public static String parseArduinoMessage(byte[] data) {
 		String _data = new String(data);
-
+		Log.d("UTILS", _data);
+		
 		String message;
-		if (_data.contains(Constants.EMERGENCY_MESSAGE)) {
+		if (_data.contains(Constants.ARDUINO_EMERGENCY_MESSAGE)) {
 			message = Constants.EMERGENCY_MESSAGE;
-		} else if (_data.contains(Constants.CANCEL_MESSAGE)) {
+		} else if (_data.contains(Constants.ARDUINO_CANCEL_MESSAGE)) {
 			message = Constants.CANCEL_MESSAGE;
 		} else {
-			message = Constants.ERROR_MESSAGE;
+			message = Constants.ARDUINO_ERROR_MESSAGE;
 		}
 
 		return message;

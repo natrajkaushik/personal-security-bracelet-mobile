@@ -148,6 +148,11 @@ public class BluetoothConnection {
 			mConnectedThread = null;
 		}
 		
+		if(mConnectThread != null){
+			mConnectThread.cancel();
+			mConnectThread = null;
+		}
+		
 		setState(STATE_NONE);
 	}
 	
