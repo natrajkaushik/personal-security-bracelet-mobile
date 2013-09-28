@@ -18,7 +18,7 @@ public class Constants {
 	public static final String TRACKING_MESSAGE = "TRACKING";
 	
 	
-	public static final int TRACKING_PERIODICITY = 14000; 
+	public static final int TRACKING_PERIODICITY = 40000; 
 
 	// Message types sent from the BluetoothConnection Handler
 	public static final int MESSAGE_STATE_CHANGE = 1;

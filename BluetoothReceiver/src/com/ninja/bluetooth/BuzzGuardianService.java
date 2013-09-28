@@ -54,6 +54,7 @@ public class BuzzGuardianService extends Service {
 			 * CANCEL MESSAGE: Send CANCEL SMS and call stopTracking()
 			 */
 			if(Constants.EMERGENCY_MESSAGE.equals(message)){
+				Log.d(TAG, "Timestamp of sending SMS [" + System.currentTimeMillis() + "]");
 				sendSMS(Constants.EMERGENCY_TEXT, locationHelper.getLatitude(), locationHelper.getLongitude());
 				startTracking();
 			}

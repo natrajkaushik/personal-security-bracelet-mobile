@@ -272,6 +272,8 @@ public class BluetoothConnection {
                     
                     // Send the obtained bytes to the BuzzGuardianService 
                     Log.d(TAG, "Incoming data from Bluetooth Connection");
+                    
+                    Log.d(TAG, "Timestamp of incoming message from Arduino [" + System.currentTimeMillis() + "]");
                     mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, message)
                             .sendToTarget();
                
